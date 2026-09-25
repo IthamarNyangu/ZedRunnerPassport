@@ -25,6 +25,15 @@ enum VerificationStatus {
   final String label;
 }
 
+enum ActivityType {
+  race('Race'),
+  run('Run'),
+  walk('Walk');
+
+  const ActivityType(this.label);
+  final String label;
+}
+
 enum StampType { event, province, challenge }
 
 enum AchievementType { distanceMilestone, repeatDistance, personalBest }
@@ -61,8 +70,8 @@ class EventPrice {
   String get label => switch (status) {
     PriceStatus.free => 'Free',
     PriceStatus.paid =>
-      amountZmw == null ? 'Paid · price not provided' : 'K$amountZmw',
-    PriceStatus.unknown => 'Price not provided',
+      amountZmw == null ? 'Paid · fee not listed' : 'ZMW $amountZmw',
+    PriceStatus.unknown => 'Fee not listed',
   };
 }
 
@@ -104,6 +113,7 @@ class RaceResult {
     required this.distanceKm,
     required this.durationMinutes,
     required this.province,
+    required this.activityType,
     required this.verification,
     required this.source,
     this.eventId,
@@ -115,6 +125,7 @@ class RaceResult {
   final double distanceKm;
   final int durationMinutes;
   final Province province;
+  final ActivityType activityType;
   final VerificationStatus verification;
   final String source;
   final String? eventId;
@@ -126,6 +137,7 @@ class RaceResult {
     'distanceKm': distanceKm,
     'durationMinutes': durationMinutes,
     'province': province.name,
+    'activityType': activityType.name,
     'verification': verification.name,
     'source': source,
     'eventId': eventId,
@@ -138,6 +150,9 @@ class RaceResult {
     distanceKm: (json['distanceKm']! as num).toDouble(),
     durationMinutes: json['durationMinutes']! as int,
     province: Province.values.byName(json['province']! as String),
+    activityType: ActivityType.values.byName(
+      (json['activityType'] as String?) ?? ActivityType.race.name,
+    ),
     verification: VerificationStatus.values.byName(
       json['verification']! as String,
     ),

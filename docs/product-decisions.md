@@ -6,11 +6,13 @@
 - All bundled listings are visibly labelled fictional demo data. There is no claim that dates, organizers or prices are live.
 - Price is a three-state value: `free`, `paid` or `unknown`. Unknown is never treated as free.
 - Manual finishes are `selfReported`, carry a manual-entry source, and cannot become verified without a later explicit verification record.
+- Manual finishes capture an explicit Race, Run or Walk type and a user-selected activity date. Older local records migrate as Race entries.
 - Event and province stamps derived from self-reported finishes are visibly provisional.
 - Distance milestones use configured categories (5, 10, 15, 21.1 and 42.2 km) and a small tolerance; first-distance and repeat achievements are separate.
 - Saved events, race results and the optional share-name preference persist locally using `shared_preferences`.
 - Share cards omit exact date, province, route and finish time. Displaying a generic runner name is opt-in and off by default.
 - Bright-outdoor legibility, large touch targets, metric units, ZMW labels and Zambia-oriented place language guide the interface.
+- Brand tokens use green `#188038`, deep green `#143D2B`, off-white `#F8F8F2`, orange `#E57A22`, restrained red `#C4473D` and near-black `#17231C`. Manrope is bundled locally under the SIL Open Font License.
 
 ## Technical choices
 

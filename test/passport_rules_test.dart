@@ -143,6 +143,28 @@ void main() {
       );
     });
   });
+
+  group('race result storage', () {
+    test('preserves activity type and selected activity date', () {
+      final original = result(
+        id: 'walk',
+        distance: 5,
+        activityType: ActivityType.walk,
+        date: DateTime(2026, 8, 12),
+      );
+
+      final restored = RaceResult.fromJson(original.toJson());
+
+      expect(restored.activityType, ActivityType.walk);
+      expect(restored.date, DateTime(2026, 8, 12));
+    });
+
+    test('migrates records saved before activity type existed', () {
+      final json = result(id: 'legacy').toJson()..remove('activityType');
+
+      expect(RaceResult.fromJson(json).activityType, ActivityType.race);
+    });
+  });
 }
 
 RaceResult result({
@@ -150,13 +172,16 @@ RaceResult result({
   double distance = 5,
   int day = 1,
   String? eventId,
+  ActivityType activityType = ActivityType.race,
+  DateTime? date,
 }) => RaceResult(
   id: id,
   name: 'Test finish',
-  date: DateTime(2026, 1, day),
+  date: date ?? DateTime(2026, 1, day),
   distanceKm: distance,
   durationMinutes: 30,
   province: Province.lusaka,
+  activityType: activityType,
   verification: VerificationStatus.selfReported,
   source: 'test',
   eventId: eventId,

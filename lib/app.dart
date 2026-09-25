@@ -168,6 +168,41 @@ class DemoBanner extends StatelessWidget {
   );
 }
 
+class _DemoStatusLabel extends StatelessWidget {
+  const _DemoStatusLabel();
+
+  @override
+  Widget build(BuildContext context) => Align(
+    alignment: Alignment.centerLeft,
+    child: Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: TamangaSpacing.md,
+        vertical: TamangaSpacing.sm,
+      ),
+      decoration: BoxDecoration(
+        color: TamangaColours.orange.withValues(alpha: .12),
+        borderRadius: BorderRadius.circular(TamangaRadii.pill),
+      ),
+      child: const Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.science_outlined, size: 17, color: TamangaColours.orange),
+          SizedBox(width: TamangaSpacing.sm),
+          Text(
+            'FICTIONAL DEMO EVENT',
+            style: TextStyle(
+              color: TamangaColours.deepGreen,
+              fontSize: 11,
+              fontWeight: FontWeight.w800,
+              letterSpacing: .8,
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
+}
+
 class HomePage extends StatelessWidget {
   const HomePage({super.key, required this.state, required this.openExplore});
   final AppState state;
@@ -195,6 +230,26 @@ class HomePage extends StatelessWidget {
             _MessageCard(icon: Icons.warning_amber, text: state.loadError!),
             const SizedBox(height: 12),
           ],
+          Row(
+            children: [
+              Expanded(
+                child: FilledButton.icon(
+                  onPressed: () => showAddFinish(context, state),
+                  icon: const Icon(Icons.add_circle_outline),
+                  label: const Text('Log a finish'),
+                ),
+              ),
+              const SizedBox(width: TamangaSpacing.md),
+              Expanded(
+                child: OutlinedButton.icon(
+                  onPressed: openExplore,
+                  icon: const Icon(Icons.explore_outlined),
+                  label: const Text('Find events'),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: TamangaSpacing.lg),
           _HeroPassport(
             results: state.results.length,
             kilometres: totalKm,
@@ -263,10 +318,10 @@ class _HeroPassport extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Container(
-    padding: const EdgeInsets.all(24),
+    padding: TamangaComponents.cardPadding,
     decoration: BoxDecoration(
       color: TamangaColours.ink,
-      borderRadius: BorderRadius.circular(30),
+      borderRadius: BorderRadius.circular(TamangaRadii.hero),
       gradient: const LinearGradient(
         colors: [TamangaColours.ink, Color(0xFF1C513E)],
         begin: Alignment.topLeft,
@@ -289,7 +344,7 @@ class _HeroPassport extends StatelessWidget {
             ),
           ],
         ),
-        const SizedBox(height: 28),
+        const SizedBox(height: TamangaSpacing.xl),
         Text(
           results == 0
               ? 'Your first mark\nstarts here.'
@@ -298,7 +353,7 @@ class _HeroPassport extends StatelessWidget {
             context,
           ).textTheme.displaySmall?.copyWith(color: Colors.white),
         ),
-        const SizedBox(height: 24),
+        const SizedBox(height: TamangaSpacing.xl),
         Row(
           children: [
             _HeroMetric(value: '$results', label: 'FINISHES'),
@@ -388,44 +443,54 @@ class _ExplorePageState extends State<ExplorePage> {
             onChanged: (value) => setState(() => province = value),
           ),
           const SizedBox(height: 12),
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              children: [
-                FilterChip(
-                  label: const Text('Upcoming'),
-                  selected: upcomingOnly,
-                  onSelected: (value) => setState(() => upcomingOnly = value),
-                ),
-                const SizedBox(width: 8),
-                ...[5.0, 10.0, 15.0, 21.1, 42.2].map(
-                  (value) => Padding(
-                    padding: const EdgeInsets.only(right: 8),
-                    child: FilterChip(
-                      label: Text(
-                        '${value % 1 == 0 ? value.toInt() : value} km',
-                      ),
-                      selected: distance == value,
-                      onSelected: (selected) =>
-                          setState(() => distance = selected ? value : null),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 8),
-          SegmentedButton<PriceStatus?>(
-            showSelectedIcon: false,
-            segments: const [
-              ButtonSegment(value: null, label: Text('Any')),
-              ButtonSegment(value: PriceStatus.free, label: Text('Free')),
-              ButtonSegment(value: PriceStatus.paid, label: Text('Paid')),
-              ButtonSegment(value: PriceStatus.unknown, label: Text('Unknown')),
+          Row(
+            children: [
+              Text('Distance', style: Theme.of(context).textTheme.titleMedium),
+              const Spacer(),
+              FilterChip(
+                avatar: const Icon(Icons.calendar_today_outlined, size: 16),
+                label: const Text('Upcoming'),
+                selected: upcomingOnly,
+                onSelected: (value) => setState(() => upcomingOnly = value),
+              ),
             ],
-            selected: {price},
-            onSelectionChanged: (selection) =>
-                setState(() => price = selection.first),
+          ),
+          const SizedBox(height: TamangaSpacing.sm),
+          Wrap(
+            spacing: TamangaSpacing.sm,
+            runSpacing: TamangaSpacing.sm,
+            children: [5.0, 10.0, 15.0, 21.1, 42.2]
+                .map(
+                  (value) => FilterChip(
+                    label: Text('${value % 1 == 0 ? value.toInt() : value} km'),
+                    selected: distance == value,
+                    onSelected: (selected) =>
+                        setState(() => distance = selected ? value : null),
+                  ),
+                )
+                .toList(),
+          ),
+          const SizedBox(height: TamangaSpacing.lg),
+          Text('Entry fee', style: Theme.of(context).textTheme.titleMedium),
+          const SizedBox(height: TamangaSpacing.sm),
+          Wrap(
+            spacing: TamangaSpacing.sm,
+            runSpacing: TamangaSpacing.sm,
+            children:
+                [
+                      (null, 'Any'),
+                      (PriceStatus.free, 'Free'),
+                      (PriceStatus.paid, 'Paid'),
+                      (PriceStatus.unknown, 'Not listed'),
+                    ]
+                    .map(
+                      (item) => ChoiceChip(
+                        label: Text(item.$2),
+                        selected: price == item.$1,
+                        onSelected: (_) => setState(() => price = item.$1),
+                      ),
+                    )
+                    .toList(),
           ),
           const SizedBox(height: 20),
           Text(
@@ -544,8 +609,8 @@ class EventDetailPage extends StatelessWidget {
       body: ListView(
         padding: const EdgeInsets.fromLTRB(16, 8, 16, 36),
         children: [
-          const DemoBanner(),
-          const SizedBox(height: 18),
+          const _DemoStatusLabel(),
+          const SizedBox(height: TamangaSpacing.md),
           Container(
             padding: const EdgeInsets.all(24),
             decoration: BoxDecoration(
@@ -601,8 +666,8 @@ class EventDetailPage extends StatelessWidget {
                     icon: Icons.payments_outlined,
                     title: event.price.label,
                     subtitle: event.price.status == PriceStatus.unknown
-                        ? 'Do not assume this event is free'
-                        : 'Entry status',
+                        ? 'Fee not supplied; this does not mean free'
+                        : 'Entry fee',
                   ),
                   _DetailRow(
                     icon: Icons.groups_outlined,
@@ -693,18 +758,11 @@ class PassportPage extends StatelessWidget {
                 'Log a completed race to create your first transparent, provisional stamp.',
           )
         else
-          GridView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              crossAxisSpacing: 10,
-              mainAxisSpacing: 10,
-              childAspectRatio: .82,
+          ...state.stamps.map(
+            (stamp) => Padding(
+              padding: const EdgeInsets.only(bottom: TamangaSpacing.md),
+              child: StampCard(stamp: stamp),
             ),
-            itemCount: state.stamps.length,
-            itemBuilder: (context, index) =>
-                StampCard(stamp: state.stamps[index]),
           ),
         const SizedBox(height: 24),
         _SectionHeading(
@@ -736,40 +794,63 @@ class StampCard extends StatelessWidget {
   final PassportStamp stamp;
   @override
   Widget build(BuildContext context) => Card(
-    color: stamp.isProvisional ? const Color(0xFFFFF5DF) : TamangaColours.mist,
+    color: stamp.isProvisional ? const Color(0xFFFFF3E8) : TamangaColours.mist,
     child: Padding(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      padding: TamangaComponents.cardPadding,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Align(
-            alignment: Alignment.topRight,
+          Container(
+            width: 72,
+            height: 72,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: TamangaColours.deepGreen,
+              border: Border.all(color: TamangaColours.orange, width: 3),
+            ),
             child: Icon(
               stamp.type == StampType.province
                   ? Icons.landscape_outlined
                   : Icons.directions_run,
-              color: TamangaColours.copper,
-              size: 32,
+              color: Colors.white,
+              size: 30,
             ),
           ),
-          const Spacer(),
-          Text(
-            stamp.title,
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-            style: Theme.of(context).textTheme.titleMedium,
-          ),
-          const SizedBox(height: 8),
-          _Pill(
-            stamp.isProvisional ? 'PROVISIONAL' : 'VERIFIED',
-            accent: !stamp.isProvisional,
-          ),
-          const SizedBox(height: 8),
-          Text(
-            stamp.criteria,
-            maxLines: 3,
-            overflow: TextOverflow.ellipsis,
-            style: const TextStyle(fontSize: 11, color: Colors.black54),
+          const SizedBox(width: TamangaSpacing.lg),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        stamp.title,
+                        style: Theme.of(context).textTheme.titleMedium,
+                      ),
+                    ),
+                    _Pill(
+                      stamp.isProvisional ? 'PROVISIONAL' : 'VERIFIED',
+                      accent: !stamp.isProvisional,
+                    ),
+                  ],
+                ),
+                const SizedBox(height: TamangaSpacing.sm),
+                Text(
+                  stamp.criteria,
+                  style: const TextStyle(fontSize: 12, color: Colors.black54),
+                ),
+                const SizedBox(height: TamangaSpacing.sm),
+                Text(
+                  'Earned ${DateFormat('d MMM y').format(stamp.earnedAt)}',
+                  style: const TextStyle(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w700,
+                    color: TamangaColours.deepGreen,
+                  ),
+                ),
+              ],
+            ),
           ),
         ],
       ),
@@ -837,8 +918,10 @@ class ProfilePage extends StatelessWidget {
                     contentPadding: EdgeInsets.zero,
                     value: state.includeNameOnShare,
                     title: const Text('Show my name on share cards'),
-                    subtitle: const Text(
-                      'Off by default; event date and location stay hidden.',
+                    subtitle: Text(
+                      state.includeNameOnShare
+                          ? 'Name included. Date, location, route and time remain hidden.'
+                          : 'Name hidden. Date, location, route and time are also hidden.',
                     ),
                     onChanged: state.setIncludeNameOnShare,
                   ),
@@ -904,7 +987,7 @@ class ResultCard extends StatelessWidget {
               ],
             ),
             Text(
-              '${DateFormat('d MMM y').format(result.date)} · ${result.province.label}',
+              '${result.activityType.label} · ${DateFormat('d MMM y').format(result.date)} · ${result.province.label}',
               style: const TextStyle(color: Colors.black54),
             ),
             const SizedBox(height: 14),
@@ -968,6 +1051,20 @@ class _ResultMetric extends StatelessWidget {
   );
 }
 
+class _FormLabel extends StatelessWidget {
+  const _FormLabel(this.text);
+
+  final String text;
+
+  @override
+  Widget build(BuildContext context) => Text(
+    text,
+    style: Theme.of(
+      context,
+    ).textTheme.labelLarge?.copyWith(color: TamangaColours.deepGreen),
+  );
+}
+
 Future<void> showAddFinish(
   BuildContext context,
   AppState state, {
@@ -979,11 +1076,16 @@ Future<void> showAddFinish(
   );
   final minutes = TextEditingController();
   Province province = event?.province ?? Province.lusaka;
+  DateTime activityDate = DateTime.now();
+  ActivityType activityType = event == null
+      ? ActivityType.run
+      : ActivityType.race;
   final formKey = GlobalKey<FormState>();
   await showModalBottomSheet<void>(
     context: context,
     isScrollControlled: true,
     useSafeArea: true,
+    showDragHandle: true,
     builder: (sheetContext) => StatefulBuilder(
       builder: (context, setSheetState) => Padding(
         padding: EdgeInsets.fromLTRB(
@@ -1000,18 +1102,66 @@ Future<void> showAddFinish(
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  'Log a completed race',
+                  'Log a finish',
                   style: Theme.of(context).textTheme.headlineMedium,
                 ),
                 const SizedBox(height: 6),
                 const Text(
-                  'Manual entries are saved on this device and always labeled self-reported.',
+                  'Add what you completed. Manual entries stay clearly self-reported.',
                 ),
                 const SizedBox(height: 18),
+                const _FormLabel('Activity type'),
+                const SizedBox(height: TamangaSpacing.sm),
+                SizedBox(
+                  width: double.infinity,
+                  child: SegmentedButton<ActivityType>(
+                    showSelectedIcon: false,
+                    segments: ActivityType.values
+                        .map(
+                          (type) => ButtonSegment(
+                            value: type,
+                            label: Text(type.label),
+                          ),
+                        )
+                        .toList(),
+                    selected: {activityType},
+                    onSelectionChanged: (selection) =>
+                        setSheetState(() => activityType = selection.first),
+                  ),
+                ),
+                const SizedBox(height: TamangaSpacing.lg),
+                const _FormLabel('Activity date'),
+                const SizedBox(height: TamangaSpacing.sm),
+                InkWell(
+                  borderRadius: BorderRadius.circular(TamangaRadii.control),
+                  onTap: () async {
+                    final picked = await showDatePicker(
+                      context: context,
+                      initialDate: activityDate,
+                      firstDate: DateTime(2000),
+                      lastDate: DateTime.now(),
+                    );
+                    if (picked != null) {
+                      setSheetState(() => activityDate = picked);
+                    }
+                  },
+                  child: InputDecorator(
+                    decoration: const InputDecoration(
+                      prefixIcon: Icon(Icons.calendar_today_outlined),
+                      suffixIcon: Icon(Icons.expand_more),
+                    ),
+                    child: Text(
+                      DateFormat('EEEE, d MMMM y').format(activityDate),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: TamangaSpacing.lg),
+                const _FormLabel('Activity name'),
+                const SizedBox(height: TamangaSpacing.sm),
                 TextFormField(
                   controller: name,
                   decoration: const InputDecoration(
-                    labelText: 'Event or activity name',
+                    hintText: 'e.g. Saturday club run',
                   ),
                   validator: (value) => value == null || value.trim().isEmpty
                       ? 'Enter a name'
@@ -1027,7 +1177,8 @@ Future<void> showAddFinish(
                           decimal: true,
                         ),
                         decoration: const InputDecoration(
-                          labelText: 'Distance (km)',
+                          labelText: 'Distance',
+                          suffixText: 'km',
                         ),
                         validator: _positiveNumberValidator,
                       ),
@@ -1038,7 +1189,8 @@ Future<void> showAddFinish(
                         controller: minutes,
                         keyboardType: TextInputType.number,
                         decoration: const InputDecoration(
-                          labelText: 'Time (minutes)',
+                          labelText: 'Duration',
+                          suffixText: 'min',
                         ),
                         validator: _positiveNumberValidator,
                       ),
@@ -1048,7 +1200,9 @@ Future<void> showAddFinish(
                 const SizedBox(height: 12),
                 DropdownButtonFormField<Province>(
                   initialValue: province,
-                  decoration: const InputDecoration(labelText: 'Province'),
+                  decoration: const InputDecoration(
+                    labelText: 'Activity province',
+                  ),
                   items: Province.values
                       .map(
                         (item) => DropdownMenuItem(
@@ -1076,10 +1230,11 @@ Future<void> showAddFinish(
                         RaceResult(
                           id: 'manual-${now.microsecondsSinceEpoch}',
                           name: name.text.trim(),
-                          date: now,
+                          date: activityDate,
                           distanceKm: double.parse(distance.text),
                           durationMinutes: double.parse(minutes.text).round(),
                           province: province,
+                          activityType: activityType,
                           verification: VerificationStatus.selfReported,
                           source: 'Manual entry on this device',
                           eventId: event?.id,
