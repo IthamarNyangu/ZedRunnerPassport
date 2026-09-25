@@ -1,0 +1,294 @@
+'use strict';
+
+(function(window, $, undefined) {
+
+	// Initialize
+
+	
+	function onSocialClick(e) {
+		
+        var clickedTarget = $(e.currentTarget);
+        var pageUrl = clickedTarget.data("href");
+        var imageURL = clickedTarget.data("media");
+        var title = clickedTarget.data("title");
+        
+        switch (clickedTarget.data("share-type")) {
+            case "facebook":
+                
+                var socialUrl = 'https://www.facebook.com/sharer.php?u=' + encodeURIComponent(pageUrl);
+                
+                openWindow(socialUrl);
+
+                break;
+            case "kakao":
+
+            var description = clickedTarget.data("description");
+            var kakaoButtonString = clickedTarget.data("kakao-button");
+                
+                Kakao.Link.sendDefault({
+                objectType: 'feed',
+                content: {
+                    title: title,
+                    description: description,
+                    imageUrl: 'https://developer.apple.com/news/images/kakao/apple_developer.png',
+                    link: {
+                        mobileWebUrl: pageUrl,
+                        webUrl: pageUrl
+                    }
+                },
+                buttons: [
+                    {
+                    title: kakaoButtonString,
+                    link: {
+                        mobileWebUrl: pageUrl,
+                        webUrl: pageUrl
+                    }
+                    }
+                ]
+                });
+
+                break;
+            case "weibo":
+
+                var socialUrl = 'http://service.weibo.com/share/share.php?url=' + encodeURIComponent(pageUrl) + '&pic=' + encodeURIComponent(imageURL) + '&title=' + title;
+                
+                openWindow(socialUrl);
+                
+                break;
+            case "wechat":
+
+                var isWeChat = $('body').hasClass('in-wechat');
+
+                if (!isWeChat) {
+                    $("[data-modal='wechat']").show();
+
+                    var figureChildren = $('figure.wechat-qrcode').children().length;
+    
+                    if(figureChildren == 0 ){
+                        generateQR(pageUrl);
+                    }else{
+                        $('figure.wechat-qrcode').empty();
+                        generateQR(pageUrl);
+                    }
+                }else{
+                    $("[data-modal='in-wechat']").show();
+                }
+
+                break;
+            case "twitter":
+
+                var socialUrl = 'https://twitter.com/intent/tweet?url=' + encodeURIComponent(pageUrl);
+                
+                openWindow(socialUrl);
+                
+                break;
+            case "mail":
+
+                    var subject = clickedTarget.data("title");
+                    //var description = clickedTarget.data("description");
+                    var sharableLink = pageUrl;
+
+                    var emailBody = encodeURIComponent(sharableLink + '\r\n');
+
+                    launchEmail(subject, emailBody);
+
+                break;
+            case "copy":
+
+                    var copy = copyLink(pageUrl, clickedTarget);
+                    var title = clickedTarget.data("copy-title");
+
+                    if(copy){
+                        clickedTarget.closest('section').append("<div class='social-tooltip'>" + title  + "</div>");
+                        $('.social-tooltip').fadeOut(800, function(){ $(this).remove();});
+                    }
+                
+                break;
+            
+            default:
+                break;
+        }
+		
+    }
+
+    function onModalCloseClick(e){
+        $('figure.wechat-qrcode').empty();
+        $("[data-modal='wechat']").hide();
+    }
+    function onInWeChatModalClick(e){
+        $("[data-modal='in-wechat']").hide();
+    }
+
+    function generateQR(pageUrl){
+        var qrcode = new QRCode('wechat-qrcode',{
+            text: pageUrl,
+            width: 128,
+            height: 128,
+            colorDark : "#000000",
+            colorLight : "#ffffff"
+        } )
+    }
+
+    function openWindow(socialUrl) {
+        window.open(socialUrl, "_blank", "width=555,height=368");
+    }
+
+    function launchEmail(subject, emailBody) {
+        document.location = "mailto:"+"?subject="+subject+"&body="+emailBody;
+    }
+
+    function copyLink(str) {
+        var el = document.createElement('textarea');
+        el.value = str;
+        el.setAttribute('readonly', '');
+        el.style = {position: 'absolute', left: '-9999px'};
+        document.body.appendChild(el);
+    
+        if (navigator.userAgent.match(/ipad|ipod|iphone/i)) {
+            var editable = el.contentEditable;
+            var readOnly = el.readOnly;
+    
+            el.contentEditable = true;
+            el.readOnly = true;
+    
+            var range = document.createRange();
+            range.selectNodeContents(el);
+    
+            var selection = window.getSelection();
+            selection.removeAllRanges();
+            selection.addRange(range);
+            el.setSelectionRange(0, 999999);
+    
+            el.contentEditable = editable;
+            el.readOnly = readOnly;
+
+        } else {
+            el.select(); 
+        }
+        document.execCommand('copy');
+        document.body.removeChild(el);
+
+        return true;
+    }
+    
+    function changeImages(switchType) {
+        var userPreferenceIsDark = false; 
+
+        
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            var userPreferenceIsDark = true;           
+        }
+
+        $("img").each(function(i) {
+            var darkImageAttr = $(this).attr('data-img-dark');
+
+            if(typeof darkImageAttr !== 'undefined' && darkImageAttr !== false){
+
+                switch (switchType) {
+                    case 'auto':
+                        if(userPreferenceIsDark){
+                            $(this).attr('src', darkImageAttr);
+                        }else{
+                            var imgSrc = $(this).attr('src').replace('-dark.','.');
+                            $(this).attr('src', imgSrc);
+                        }
+                        break;
+                    case 'dark':
+                        $(this).attr('src', darkImageAttr);
+                        break;
+                    case 'light':
+                        var imgSrc = $(this).attr('src').replace('-dark.','.');
+                        $(this).attr('src', imgSrc);
+                        break;
+                
+                    default:
+                        break;
+                }
+
+
+            }
+        });
+    }
+
+    function onChangeDarkModeToAuto(e) {
+        changeImages('auto');
+    }
+
+    function onChangeDarkModeToLight(e) {
+        changeImages('light');
+    }
+
+    function onChangeDarkModeToDark(e) {
+        changeImages('dark');
+    }
+    
+    function onClickCardButtonResource(e) {
+        //data-
+        var clickedLink = $(e.currentTarget);
+        var clickedLinkValue = clickedLink.data('link-to-resource');
+
+        if (clickedLinkValue.includes('/go/?id=')) {        
+            var valueToStore = clickedLinkValue.split('/go/?id=');
+        }        
+        if (typeof s !== 'undefined' && valueToStore[1] !== 'undefined') {
+            s.tl(true, 'd', 'download-'.concat(valueToStore[1]));
+        }
+    }
+
+
+    
+	(function init() {
+        
+        $(function() {
+            
+            var handlers = {};
+			
+			handlers.onSocialClick = function(e) {
+                onSocialClick(e);
+			};
+			handlers.onModalCloseClick = function(e) {
+                onModalCloseClick(e);
+			};
+			handlers.onInWeChatModalClick = function(e) {
+                onInWeChatModalClick(e);
+			};
+			handlers.onChangeDarkModeToAuto = function(e) {
+                onChangeDarkModeToAuto(e);
+			};
+			handlers.onChangeDarkModeToLight = function(e) {
+                onChangeDarkModeToLight(e);
+			};
+			handlers.onChangeDarkModeToDark = function(e) {
+                onChangeDarkModeToDark(e);
+			};
+			handlers.onClickCardButtonResource = function(e) {
+                onClickCardButtonResource(e);
+			};
+
+			$(".social-option button").on('click', handlers.onSocialClick);
+            $("button.modal-close").on('click', handlers.onModalCloseClick);
+            $("[data-modal='in-wechat']").on('click', handlers.onInWeChatModalClick);
+            $("input[value='auto']").on('click', handlers.onChangeDarkModeToAuto);
+            $("input[value='light']").on('click', handlers.onChangeDarkModeToLight);
+            $("input[value='dark']").on('click', handlers.onChangeDarkModeToDark);
+            $("a.card-button-component").on('click', handlers.onClickCardButtonResource);
+            
+            changeImages('auto');
+            
+            document.addEventListener('WeixinJSBridgeReady', function onBridgeReady() { 
+                $("body").addClass('in-wechat');
+            }, $("body").addClass('no-in-wechat'));
+    
+            if(window.location.href.indexOf('/kr/') > 0 ){
+                Kakao.init('f9275152cfdc8d902692d0b15c7880c9');
+            }
+			
+		});
+		
+	}());
+	
+}(window, window.jQuery));
+
+
+
+

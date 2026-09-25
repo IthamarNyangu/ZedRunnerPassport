@@ -1,0 +1,332 @@
+:root {
+	--quote-color: rgb(139 139 141);
+	--quote-border-color: rgb(225 225 225);
+}
+
+.article-text img {
+	width: 100%;
+	display: block;
+	max-width: 100%;
+	margin: 1.5em auto 1.5em 0;
+	border-radius: 8px;
+}
+
+.inline-article-image p {
+	max-width: 600px;
+	padding-bottom: 1.5em;
+}
+
+.inline-article-video p {
+	max-width: 600px;
+	padding-bottom: 1.5em;
+}
+
+.article-text ul,
+.article-text ol {
+	padding-left: 0;
+}
+
+.article-text ol {
+	list-style-type: decimal;
+}
+
+.article-text ul li,
+.article-text ol li {
+	margin-top: 0.8em !important;
+}
+
+.article-quote {
+	border-top: 1px solid var(--quote-border-color);
+	border-bottom: 1px solid var(--quote-border-color);
+	margin: 1em 0;
+	padding: 1em 0.5em;
+	color: var(--quote-color);
+	font-size: 1.25rem;
+	position: relative;
+}
+
+.article-quote > p::before,
+.article-quote > p::after {
+	display: inline-block;
+	width: 2em;
+}
+
+.article-quote > p::before {
+	content: open-quote;
+	margin-left: -2em;
+	text-align: right;
+	visibility: hidden;
+}
+
+.article-quote > p::after {
+	content: close-quote;
+	margin-right: -2em;
+	text-align: left;
+	visibility: hidden;
+}
+
+.article-quote > p:last-of-type {
+	margin-bottom: 0;
+}
+
+.article-quote > p:last-of-type::after,
+.article-quote > p:first-of-type::before {
+	visibility: visible;
+}
+
+.article-quote cite {
+	font-size: 0.7rem;
+	font-style: normal;
+}
+
+.syntax-param-name {
+	color: #404040;
+}
+
+.syntax-comment,
+.syntax-quote {
+	color: #65798c;
+}
+
+.syntax-keyword,
+.syntax-literal,
+.syntax-selector-tag {
+	color: #ad3da4;
+}
+
+.syntax-string {
+	color: #d12f1b;
+}
+
+.syntax-link {
+	font-weight: italic;
+}
+
+.syntax-bullet,
+.syntax-meta,
+.syntax-number,
+.syntax-symbol,
+.syntax-tag,
+.syntax-title {
+	color: #272ad8;
+}
+
+.syntax-attr,
+.syntax-built_in,
+.syntax-builtin-name,
+.syntax-class,
+.syntax-params,
+.syntax-section,
+.syntax-title,
+.syntax-type {
+	color: #703daa;
+}
+
+.syntax-attribute,
+.syntax-identifier,
+.syntax-subst {
+	color: #000000;
+}
+
+.syntax-addition,
+.syntax-deletion {
+	padding: 2px 0;
+}
+
+.syntax-addition {
+	background-color: #e6f6d7;
+}
+
+.syntax-deletion {
+	background-color: #ffeeee;
+}
+
+.syntax-doctag,
+.syntax-strong {
+	font-weight: bold;
+}
+
+.syntax-emphasis {
+	font-style: italic;
+}
+
+.syntax-meta {
+	color: #ad3da4;
+}
+
+/*banner*/
+
+.banner {
+	padding: 1.5em 1.5em;
+	margin: 0 0 1em 0;
+	border-radius: 10px;
+	cursor: ponter;
+}
+
+.banner .description {
+	padding-right: 1em;
+}
+
+.banner img {
+	width: 128px;
+	margin: 0 auto;
+	padding: 0;
+}
+
+.grid.banner {
+	width: 100%;
+}
+
+a .banner {
+	color: #333;
+}
+
+/* .activity h4 {
+	color: #333 !important;
+} */
+
+.activity img {
+	margin: 0;
+}
+
+.article-text ul.activity-tags {
+	margin: 0 !important;
+	list-style-type: none;
+	padding: 0 !important;
+}
+
+.article-text li.activity-tag {
+	color: #aaaaaa;
+	display: inline-block;
+	margin: 0 !important;
+	padding: 0 !important;
+}
+
+@media screen and (max-width: 1068px) and (min-width: 320px) {
+	.activity .activity-description {
+		display: none;
+	}
+
+	.activity h4 {
+		font-size: 1em;
+	}
+}
+
+body[data-color-scheme="dark"] .activity .activity-description {
+	color: rgb(245, 245, 247) !important;
+	font-size: 0.8em;
+}
+
+body[data-color-scheme="light"] .activity .activity-description {
+	color: #333 !important;
+	font-size: 0.8em;
+}
+
+.activity a:hover {
+	text-decoration: none !important;
+}
+
+.grid.activity {
+	width: 100%;
+	margin-bottom: 1em;
+	margin-top: 1em;
+	padding-top: 1em !important;
+	padding-bottom: 1em !important;
+}
+
+/* .article-text h3 {
+    padding-bottom: 1em;
+} */
+
+.grid.activity h4 {
+	font-size: 1.2em;
+	margin-top: 0.3em;
+	margin-bottom: 0.2em;
+}
+
+body[data-color-scheme="dark"] .grid .activity h4 {
+	color: rgb(245, 245, 247) !important;
+}
+
+h4.activity-title {
+	font-size: 1em !important;
+}
+
+.article-text h3 {
+	font-size: 1.4em;
+}
+
+section.activity + section.activity {
+	border-top: none !important;
+	/* padding-top: 0 !important; */
+}
+
+/* .article-text .inline-article-image:not(:first-child) img {
+    width: 90% !important;
+} */
+
+
+.article-text > .inline-article-image img {
+	width: 100% !important;
+	border-radius: 10px;
+	margin: 1.5em auto 1.25em 0;
+}
+
+.article-text > .inline-article-video video {
+	width: 100% !important;
+}
+
+.article-text > .inline-article-image div.typography-caption,
+.article-text > .inline-article-video div.typography-caption {
+	position: relative;
+    margin: 0.5em 1em 0;
+    font-size: 12px;
+    line-height: 1.3333733333;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+	opacity: 0.8;
+}
+
+.activity .view-activitiy-link {
+	font-size: 0.8em;
+}
+
+section + h3 {
+	margin-top: 1.6em;
+}
+
+.header-callout-text + h3 {
+	margin-top: 0;
+}
+
+p.header-callout-text {
+	margin-top: 2.5em;
+	font-size: 0.8em;
+}
+
+hr {
+	margin-top: 1.5em;
+	margin-bottom: 1.5em;
+}
+
+.article-image-with-caption {
+	margin-bottom: 0.5em !important;
+}
+
+p.sosumi + h3 {
+	margin-top: 0 !important;
+}
+
+p.sosumi {
+	margin-bottom: 0 !important;
+	margin-top: 2.5em !important;
+	font-weight: 800;
+}
+
+p.sosumi:has(+ p) {
+	font-weight: normal !important;
+}
+
+p.sosumi:last-child {
+	font-weight: normal !important;
+}
